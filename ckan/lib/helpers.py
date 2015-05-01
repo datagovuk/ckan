@@ -227,6 +227,18 @@ def _add_i18n_to_url(url_to_amend, **kw):
     return url
 
 
+def url_is_local(url):
+    '''Returns True if url is local'''
+    if not url or url.startswith('//'):
+        return False
+    parsed = urlparse.urlparse(url)
+    if parsed.scheme:
+        domain = urlparse.urlparse(url_for('/', qualified=True)).netloc
+        if domain != parsed.netloc:
+            return False
+    return True
+
+
 def full_current_url():
     ''' Returns the fully qualified current url (eg http://...) useful
     for sharing etc '''
