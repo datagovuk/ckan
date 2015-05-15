@@ -1463,7 +1463,7 @@ class Celery(CkanCommand):
             processes = int(self.args[1].split('=')[-1])
             celery_args.append('--concurrency=%s' % processes)
         if self.options.queue:
-            celery_args.append('--queue=%s' % self.options.queue)
+            celery_args.append('--queues=%s' % self.options.queue)
 
         if self.options.hostname:
             celery_args.append('--hostname=%s' % self.options.hostname)
@@ -1472,7 +1472,9 @@ class Celery(CkanCommand):
             # Default the worker name to the name of the queue being listened to
             celery_args.append('--hostname=%s' % self.options.queue)
 
-        celery.worker_main(argv=['celeryd', '--loglevel=INFO'] + celery_args)
+        argv = ['celeryd', '--loglevel=INFO'] + celery_args
+        print 'Running: %s' % ' '.join(argv)
+        celery.worker_main(argv=argv)
 
     def get_celery_db_session(self):
         '''
