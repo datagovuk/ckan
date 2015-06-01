@@ -20,7 +20,7 @@ import ckan.lib.navl.dictization_functions
 import ckan.lib.uploader as uploader
 import ckan.lib.navl.validators as validators
 import ckan.lib.mailer as mailer
-import ckan.authz as authz
+import ckan.new_authz as authz
 
 from ckan.common import _
 
