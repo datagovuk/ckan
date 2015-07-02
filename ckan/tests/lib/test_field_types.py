@@ -1,5 +1,3 @@
-import formalchemy
-
 from ckan.lib.field_types import *
 from ckan.tests import *
 from unittest import TestCase
@@ -56,8 +54,6 @@ class TestDate(TestCase):
                          '24:03 2/11/67']
         for date_str in valid_dates:
             assert DateType.form_validator(date_str) is None, date_str
-        for date_str in invalid_dates:
-            self.assertRaises(formalchemy.ValidationError, DateType.form_validator, date_str)
         
     def test_3_db_to_form(self):
         expected_db_to_form = [
