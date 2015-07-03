@@ -3,10 +3,6 @@ import time
 import datetime
 import warnings
 
-with warnings.catch_warnings():
-    warnings.filterwarnings('ignore', '.*compile_mappers.*')
-    import formalchemy
-
 from ckan.common import OrderedDict
 
 months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -241,13 +237,6 @@ class DateType(object):
             format_dict['time_separator'] = cls.default_separators[format_type]['time']
             formatted_datetime = datetime_format_string % format_dict
         return formatted_datetime
-
-    @staticmethod
-    def form_validator(form_date_str, field=None):
-        try:
-            DateType.form_to_db(form_date_str)
-        except DateConvertError, e:
-            raise formalchemy.ValidationError(e)
 
     @classmethod
     def db_to_form(cls, db_str):
