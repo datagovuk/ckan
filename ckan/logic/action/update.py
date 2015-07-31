@@ -215,10 +215,11 @@ def resource_update(context, data_dict):
     del context["resource"]
 
     package_id = resource.resource_group.package.id
+    # DGU-only hack - http://redmine.dguteam.org.uk/issues/1281
     # Provide a local context, because package_show will set a schema in it
     # that is only appropriate for package_show.
     package_show_context = {'model': model, 'user': user}
-    pkg_dict = _get_action('package_show')(package_show_context,
+    pkg_dict = _get_action('package_show')(dict(package_show_context, return_type='dict'),
                                            {'id': package_id,
                                             'use_default_schema': True})
 
