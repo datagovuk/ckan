@@ -96,6 +96,7 @@ entry_points = {
         'test_package_controller_plugin = tests.ckantestplugins:MockPackageControllerPlugin',
         'test_resource_preview = tests.ckantestplugins:MockResourcePreviewExtension',
         'test_json_resource_preview = tests.ckantestplugins:JsonMockResourcePreviewExtension',
+        'test_datapusher_plugin = ckanext.datapusher.tests.test_interfaces:FakeDataPusherPlugin',
     ],
     'babel.extractors': [
         'ckan = ckan.lib.extract:extract_ckan',
