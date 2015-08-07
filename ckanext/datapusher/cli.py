@@ -4,6 +4,7 @@ import ckan.lib.cli as cli
 import ckan.plugins as p
 import ckanext.datastore.db as datastore_db
 
+
 class DatapusherCommand(cli.CkanCommand):
     '''Perform commands in the datapusher
 
@@ -27,7 +28,7 @@ class DatapusherCommand(cli.CkanCommand):
         elif self.args and self.args[0] == 'submit':
             self._confirm_or_abort()
 
-            if len(self.args) != 2 :
+            if len(self.args) != 2:
                 print "This command requires an argument\n"
                 print self.usage
                 sys.exit(1)
@@ -43,11 +44,10 @@ class DatapusherCommand(cli.CkanCommand):
             "(e.g. data added using the datastore API) will be permanently "
             "lost. Are you sure you want to proceed?"
         )
-        answer = query_yes_no(question, default=None)
+        answer = cli.query_yes_no(question, default=None)
         if not answer == 'yes':
             print "Aborting..."
             sys.exit(0)
-
 
     def _submit_all(self):
         resources_ids = datastore_db.get_all_resources_ids_in_datastore()
@@ -58,7 +58,7 @@ class DatapusherCommand(cli.CkanCommand):
 
         package_show = p.toolkit.get_action('package_show')
         try:
-            pkg = package_show({'model':model, 'ignore_auth': True},
+            pkg = package_show({'model': model, 'ignore_auth': True},
                                {'id': pkg_id.strip()})
         except Exception, e:
             print e
@@ -72,7 +72,8 @@ class DatapusherCommand(cli.CkanCommand):
         import ckan.model as model
 
         print 'Submitting %d datastore resources' % len(resources)
-        user = p.toolkit.get_action('get_site_user')({'model': model, 'ignore_auth': True}, {})
+        user = p.toolkit.get_action('get_site_user')(
+            {'model': model, 'ignore_auth': True}, {})
         datapusher_submit = p.toolkit.get_action('datapusher_submit')
         for resource_id in resources:
             print ('Submitting %s...' % resource_id),
@@ -84,39 +85,3 @@ class DatapusherCommand(cli.CkanCommand):
                 print 'OK'
             else:
                 print 'Fail'
-
-## from http://code.activestate.com/recipes/577058/ MIT licence.
-## Written by Trent Mick
-# Taken from CKAN 2.3's cli.py
-def query_yes_no(question, default="yes"):
-    """Ask a yes/no question via raw_input() and return their answer.
-
-    "question" is a string that is presented to the user.
-    "default" is the presumed answer if the user just hits <Enter>.
-        It must be "yes" (the default), "no" or None (meaning
-        an answer is required of the user).
-
-    The "answer" return value is one of "yes" or "no".
-    """
-    valid = {"yes":"yes",   "y":"yes",  "ye":"yes",
-             "no":"no",     "n":"no"}
-    if default == None:
-        prompt = " [y/n] "
-    elif default == "yes":
-        prompt = " [Y/n] "
-    elif default == "no":
-        prompt = " [y/N] "
-    else:
-        raise ValueError("invalid default answer: '%s'" % default)
-
-    while 1:
-        sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
-        if default is not None and choice == '':
-            return default
-        elif choice in valid.keys():
-            return valid[choice]
-        else:
-            sys.stdout.write("Please respond with 'yes' or 'no' "\
-                             "(or 'y' or 'n').\n")
-

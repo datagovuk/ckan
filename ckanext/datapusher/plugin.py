@@ -10,12 +10,17 @@ import ckan.logic as logic
 import ckan.model as model
 import ckan.plugins.toolkit as toolkit
 
+from ckan.common import _
+
 log = logging.getLogger(__name__)
 _get_or_bust = logic.get_or_bust
 
-DEFAULT_FORMATS = ['csv', 'xls', 'application/csv', 'application/vnd.ms-excel',
-                   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                   'ods', 'application/vnd.oasis.opendocument.spreadsheet']
+DEFAULT_FORMATS = [
+    'csv', 'xls', 'xlsx', 'tsv', 'application/csv',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'ods', 'application/vnd.oasis.opendocument.spreadsheet',
+]
 
 
 class DatastoreException(Exception):
@@ -25,14 +30,6 @@ class DatastoreException(Exception):
 class ResourceDataController(base.BaseController):
 
     def resource_data(self, id, resource_id):
-
-        # DGU: We only want sysadmins to be able to view the status and resubmit.
-        if not toolkit.c.user:
-            base.abort(403)
-
-        user = model.User.get(toolkit.c.user)
-        if not user or not user.sysadmin:
-            base.abort(403)
 
         if toolkit.request.method == 'POST':
             try:
@@ -67,6 +64,8 @@ class ResourceDataController(base.BaseController):
             )
         except logic.NotFound:
             datapusher_status = {}
+        except logic.NotAuthorized:
+            base.abort(401, _('Not authorized to see this page'))
 
         return base.render('package/resource_data.html',
                            extra_vars={'status': datapusher_status})
@@ -90,10 +89,11 @@ class DatapusherPlugin(p.SingletonPlugin):
         datapusher_formats = config.get('ckan.datapusher.formats', '').lower()
         self.datapusher_formats = datapusher_formats.split() or DEFAULT_FORMATS
 
-        datapusher_url = config.get('ckan.datapusher.url')
-        if not datapusher_url:
-            raise Exception(
-                'Config option `ckan.datapusher.url` has to be set.')
+        for config_option in ('ckan.site_url', 'ckan.datapusher.url',):
+            if not config.get(config_option):
+                raise Exception(
+                    'Config option `{0}` must be set to use the DataPusher.'
+                    .format(config_option))
 
     def notify(self, entity, operation=None):
         if isinstance(entity, model.Resource):
@@ -104,18 +104,7 @@ class DatapusherPlugin(p.SingletonPlugin):
                 # 1 parameter
                 context = {'model': model, 'ignore_auth': True,
                            'defer_commit': True}
-                package = p.toolkit.get_action('package_show')(context, {
-                    'id': entity.get_package_id()
-                })
-                # We only want to push this request to the datapusher
-                # where the resource is in the NII.
-                if package.get('core-dataset', '') != 'true':
-                    log.debug("Ignoring resource from non-NII dataset {}".format(package['name']))
-                    return
-
-                log.debug("Processing resource from NII dataset {}".format(package['name']))
-
-                if (not package['private'] and entity.format and
+                if (entity.format and
                         entity.format.lower() in self.datapusher_formats and
                         entity.url_type != 'datapusher'):
 
