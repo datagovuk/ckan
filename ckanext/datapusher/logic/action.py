@@ -176,16 +176,25 @@ def datapusher_hook(context, data_dict):
         resource_dict = p.toolkit.get_action('resource_show')(
             context, {'id': res_id})
 
-        dataset_dict = p.toolkit.get_action('package_show')(
-            context, {'id': resource_dict['package_id']})
+        # TODO: Re-instate this code when we are using a more up-to-date CKAN
+        # that contains package_id in our resources.
+        #dataset_dict = p.toolkit.get_action('package_show')(
+        #    context, {'id': resource_dict['package_id']})
 
-        logic.get_action('resource_create_default_resource_views')(
-            context,
-            {
-                'resource': resource_dict,
-                'package': dataset_dict,
-                'create_datastore_views': True,
-            })
+        # And remove this ...
+        from ckan import model
+        res = model.Resource.get(resource_dict['id'])
+        dataset_dict = p.toolkit.get_action('package_show')(
+            context, {'id': res.get_package_id()})
+
+        # TODO: Reinstate this once we have the action
+        #logic.get_action('resource_create_default_resource_views')(
+        #    context,
+        #    {
+        #        'resource': resource_dict,
+        #        'package': dataset_dict,
+        #        'create_datastore_views': True,
+        #    })
 
     context['ignore_auth'] = True
     p.toolkit.get_action('task_status_update')(context, task)
