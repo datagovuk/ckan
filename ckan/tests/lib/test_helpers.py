@@ -176,3 +176,19 @@ class TestHelpers(TestController):
         assert_equal(h.get_pkg_dict_extra(pkg_dict, 'extra_not_found'), None)
 
         assert_equal(h.get_pkg_dict_extra(pkg_dict, 'extra_not_found', 'default_value'), 'default_value')
+
+    def test_unified_resource_format_by_extension(self):
+        assert_equal(h.unified_resource_format('xls'), 'XLS')
+
+    def test_unified_resource_format_by_description(self):
+        assert_equal(h.unified_resource_format('Excel document'), 'XLS')
+
+    def test_unified_resource_format_by_primary_mimetype(self):
+        assert_equal(h.unified_resource_format('application/vnd.ms-excel'), 'XLS')
+
+    def test_unified_resource_format_by_alternative_description(self):
+        assert_equal(h.unified_resource_format('application/msexcel'), 'XLS')
+
+    def test_unified_resource_format_by_alternative_description2(self):
+        assert_equal(h.unified_resource_format('Excel'), 'XLS')
+

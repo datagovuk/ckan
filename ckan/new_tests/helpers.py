@@ -122,16 +122,13 @@ def call_auth(auth_name, context, **kwargs):
     :rtype: dict
 
     '''
-    import ckan.logic.auth.update
-
     assert 'user' in context, ('Test methods must put a user name in the '
                                'context dict')
     assert 'model' in context, ('Test methods must put a model in the '
                                 'context dict')
 
-    # FIXME: Do we want to go through check_access() here?
-    auth_function = ckan.logic.auth.update.__getattribute__(auth_name)
-    return auth_function(context=context, data_dict=kwargs)
+    # DGU Copied from master - for ckanext-issues tests
+    return logic.check_access(auth_name, context, data_dict=kwargs)
 
 # DGU - copied helpers from master
 

@@ -20,6 +20,7 @@ import ckan.lib.navl.dictization_functions
 import ckan.lib.uploader as uploader
 import ckan.lib.navl.validators as validators
 import ckan.lib.mailer as mailer
+import ckan.new_authz as authz
 
 from ckan.common import _
 
@@ -597,24 +598,25 @@ def _group_or_org_create(context, data_dict, is_org=False):
     context["group"] = group
     context["id"] = group.id
 
-    # creator of group/org becomes an admin
-    # this needs to be after the repo.commit or else revisions break
-
-    # DGU don't add the user as an admin because all groups are created by sysadmin
-    # issue #1612
-    #member_dict = {
-    #    'id': group.id,
-    #    'object': user_id,
-    #    'object_type': 'user',
-    #    'capacity': 'admin',
-    #}
-    #member_create_context = {
-    #    'model': model,
-    #    'user': user,
-    #    'ignore_auth': True, # we are not a member of the group at this point
-    #    'session': session
-    #}
-    #logic.get_action('member_create')(member_create_context, member_dict)
+    # creator of group/org becomes an admin, unless they are a sysadmin,
+    # because sysadmin doesn't need that to edit it and by definition they are
+    # a site-wide administrator, not specific to a particular org, so will
+    # probably make another user admin for it.
+    if not authz.is_sysadmin(user):
+        # this needs to be after the repo.commit or else revisions break
+        member_dict = {
+            'id': group.id,
+            'object': user_id,
+            'object_type': 'user',
+            'capacity': 'admin',
+        }
+        member_create_context = {
+            'model': model,
+            'user': user,
+            'ignore_auth': True, # we are not a member of the group at this point
+            'session': session
+        }
+        logic.get_action('member_create')(member_create_context, member_dict)
 
     log.debug('Created object %s' % group.name)
     return model_dictize.group_dictize(group, context)

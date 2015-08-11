@@ -174,7 +174,7 @@ class PackageController(base.BaseController):
             return search_url(params, package_type)
 
         c.sort_by = _sort_by
-        if sort_by is None:
+        if not sort_by:
             c.sort_by_fields = []
         else:
             sort_by = sort_by.replace('+', ' ')
@@ -276,6 +276,10 @@ class PackageController(base.BaseController):
             c.facets = {}
             c.search_facets = {}
             c.page = h.Page(collection=[])
+        # DGU fix for negative page number - fixed in a different way on master
+        except ValidationError, e:
+            # e.g. ?page=0
+            abort(400, 'Parameter error: %s' % e)
         c.search_facets_limits = {}
         for facet in c.search_facets.keys():
             try:
