@@ -38,6 +38,7 @@ entry_points = {
         'minify = ckan.lib.cli:MinifyCommand',
         'less = ckan.lib.cli:LessCommand',
         'datastore = ckanext.datastore.commands:SetupDatastoreCommand',
+        'datapusher = ckanext.datapusher.cli:DatapusherCommand',
         'front-end-build = ckan.lib.cli:FrontEndBuildCommand',
     ],
     'console_scripts': [
@@ -96,6 +97,10 @@ entry_points = {
         'test_package_controller_plugin = tests.ckantestplugins:MockPackageControllerPlugin',
         'test_resource_preview = tests.ckantestplugins:MockResourcePreviewExtension',
         'test_json_resource_preview = tests.ckantestplugins:JsonMockResourcePreviewExtension',
+        'sample_datastore_plugin = ckanext.datastore.tests.sample_datastore_plugin:SampleDataStorePlugin',
+        'test_datastore_view = ckan.tests.lib.test_datapreview:MockDatastoreBasedResourceView',
+        'test_datapusher_plugin = ckanext.datapusher.tests.test_interfaces:FakeDataPusherPlugin',
+
     ],
     'babel.extractors': [
         'ckan = ckan.lib.extract:extract_ckan',

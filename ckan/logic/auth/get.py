@@ -272,9 +272,18 @@ def group_followee_list(context, data_dict):
     return _followee_list(context, data_dict)
 
 
+@logic.auth_audit_exempt
+def organization_followee_list(context, data_dict):
+    return _followee_list(context, data_dict)
+
+
 def user_reset(context, data_dict):
     return {'success': True}
 
 
 def request_reset(context, data_dict):
+    return {'success': True}
+
+
+def help_show(context, data_dict):
     return {'success': True}

@@ -85,7 +85,9 @@ class ApiController(base.BaseController):
             if content_type == 'json':
                 response_msg = h.json.dumps(
                     response_data,
-                    for_json=True) # handle objects with for_json methods
+                    indent=4, separators=(',', ': '),  # pretty print
+                    for_json=True,  # handle objects with for_json methods
+                    )
             else:
                 response_msg = response_data
             # Support "JSONP" callback.
@@ -169,7 +171,15 @@ class ApiController(base.BaseController):
                    'api_version': ver, 'return_type': 'LazyJSONObject',
                    'auth_user_obj': c.userobj}
         model.Session()._context = context
-        return_dict = {'help': function.__doc__}
+
+        return_dict = {'help': h.url_for(controller='api',
+                                         action='action',
+                                         logic_function='help_show',
+                                         ver=ver,
+                                         name=logic_function,
+                                         qualified=True,
+                                         )
+                       }
         try:
             side_effect_free = getattr(function, 'side_effect_free', False)
             request_data = self._get_request_data(try_url_params=
@@ -203,7 +213,7 @@ class ApiController(base.BaseController):
             return_dict['error'] = {'__type': 'Authorization Error',
                                     'message': _('Access denied')}
             return_dict['success'] = False
-            
+
             if e.extra_msg:
                 return_dict['error']['message'] += ': %s' % e.extra_msg
 
