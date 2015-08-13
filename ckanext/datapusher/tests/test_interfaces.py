@@ -39,7 +39,7 @@ class FakeDataPusherPlugin(p.SingletonPlugin):
     def can_upload(self, resource_id):
         return False
 
-    def after_upload(self, resource_id):
+    def after_upload(self, resource_dict, package_dict):
         self.after_upload_calls += 1
 
 

@@ -28,6 +28,7 @@ class IDataPusher(Interface):
 
 
     def after_upload(self, resource_dict, package_dict):
+
         """ After a resource has been successfully upload to the datastore
         this method will be called with the ID of the resource that was
         uploaded.
