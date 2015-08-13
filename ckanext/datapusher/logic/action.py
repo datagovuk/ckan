@@ -168,9 +168,6 @@ def datapusher_hook(context, data_dict):
     task['state'] = status
     task['last_updated'] = str(datetime.datetime.now())
     if status == 'complete':
-        for plugin in p.PluginImplementations(interfaces.IDataPusher):
-            plugin.after_upload(res_id)
-
         # Create default views for resource if necessary (only the ones that
         # require data to be in the DataStore)
         resource_dict = p.toolkit.get_action('resource_show')(
@@ -186,6 +183,10 @@ def datapusher_hook(context, data_dict):
         res = model.Resource.get(resource_dict['id'])
         dataset_dict = p.toolkit.get_action('package_show')(
             context, {'id': res.get_package_id()})
+
+        for plugin in p.PluginImplementations(interfaces.IDataPusher):
+            plugin.after_upload(resource_dict, dataset_dict)
+
 
         # TODO: Reinstate this once we have the action
         #logic.get_action('resource_create_default_resource_views')(
