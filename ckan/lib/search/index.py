@@ -191,6 +191,11 @@ class PackageSearchIndex(SearchIndex):
             for (okey, nkey) in [('description', 'res_description'),
                                  ('format', 'res_format'),
                                  ('url', 'res_url')]:
+                # DGU hack - don't index the format of additional resources
+                if resource['resource_type'] == 'documentation' and \
+                        okey == 'format':
+                    continue
+
                 pkg_dict[nkey] = pkg_dict.get(nkey, []) + [resource.get(okey, u'')]
         pkg_dict.pop('resources', None)
 
