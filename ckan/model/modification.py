@@ -81,4 +81,6 @@ class DomainObjectModificationExtension(plugins.SingletonPlugin):
                 log.exception(ex)
                 # We reraise all exceptions so they are obvious there
                 # is something wrong
-                raise
+                ## DGU Hack - don't reraise - it is more important the commit
+                ## operates, and we check our logs anyway.
+                #raise
