@@ -23,7 +23,7 @@ import ckan.lib.search as search
 import ckan.lib.plugins as lib_plugins
 import ckan.lib.activity_streams as activity_streams
 import ckan.new_authz as new_authz
-import ckan.lib.lazyjson as lazyjson 
+import ckan.lib.lazyjson as lazyjson
 from paste.deploy.converters import asbool
 
 from ckan.common import _
@@ -1703,8 +1703,11 @@ def package_search(context, data_dict):
             ## if the index has got a package that is not in ckan then
             ## ignore it.
             if not pkg:
-                log.warning('package %s in index but not in database' % package)
+                from ckan.lib.search import clear as clear_package
+                log.warning('package %s in index but not in database, removing' % pkg)
+                clear_package(pkg)
                 continue
+
             ## use data in search index if there
             if package_dict:
                 ## the package_dict still needs translating when being viewed
