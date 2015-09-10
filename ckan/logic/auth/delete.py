@@ -20,6 +20,10 @@ def package_delete(context, data_dict):
     else:
         return {'success': True}
 
+def dataset_purge(context, data_dict):
+    # Only sysadmins are authorized to purge datasets
+    return {'success': False}
+
 def resource_delete(context, data_dict):
     model = context['model']
     user = context.get('user')
