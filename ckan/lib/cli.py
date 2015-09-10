@@ -492,6 +492,8 @@ Default is false.'''
     def rebuild_publisher(self):
         from ckan.model import Session, Group, Member, Package
         from ckan.lib.search import rebuild as rebuild_package
+        from ckan.lib.search import clear as clear_package
+        from ckan.lib.search.common import make_connection
 
         if len(self.args) <= 1:
             print 'No publisher name was specified'
@@ -501,6 +503,25 @@ Default is false.'''
         if not publisher:
             print 'Publisher (%s) was not found' % self.args[1]
             sys.exit(0)
+
+        # Find all datasets in the index that are not in the database.
+        # We can't use package_search as that hides packages in the index
+        # that are not also in the DB.
+        conn = make_connection()
+        query = ' +publisher:"%s"' % publisher.name
+        try:
+            results = conn.query(query)
+        except Exception, e:
+            raise SearchIndexError(e)
+        finally:
+            conn.close()
+
+        for pkg in results.results:
+            if not Package.get(pkg['id']):
+                print "Removing package %s from index as it is not in DB" % pkg['name']
+                clear_package(pkg['id'])
+            else:
+                print "Package in index and db ", pkg['name']
 
         members = Session.query(Member).filter(Member.group_id==publisher.id).\
             filter(Member.state=='active').filter(Member.table_name=='package')
