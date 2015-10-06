@@ -1,38 +1,79 @@
-from nose.tools import assert_equal
+from nose import tools as nose_tools
 
-import ckan.lib.munge
+from ckan.lib.munge import (munge_name,
+                            munge_title_to_name, munge_tag)
 
-class TestMunge:
+
+class TestMungeName(object):
+
+    # (original, expected)
+    munge_list = [
+        ('unchanged', 'unchanged'),
+        ('bad spaces', 'bad-spaces'),
+        ('s', 's_'),  # too short
+        ('random:other%character&', 'random-othercharacter'),
+        (u'u with umlaut \xfc', 'u-with-umlaut-u'),
+        ('2014-11-10 12:24:05.my_image', '2014-11-10-12-24-05-my_image')
+    ]
+
     def test_munge_name(self):
-        def test_munge(title, expected_munge):
-            munge = ckan.lib.munge.munge_name(title)
-            assert_equal(munge, expected_munge)
+        '''Munge a list of names gives expected results.'''
+        for org, exp in self.munge_list:
+            munge = munge_name(org)
+            nose_tools.assert_equal(munge, exp)
 
-        test_munge('unchanged', 'unchanged')
-        test_munge('bad spaces', 'bad-spaces')
-        test_munge('s', 's_') # too short
-        test_munge('random:other%character&', 'random-othercharacter')
-        test_munge(u'u with umlaut \xfc', 'u-with-umlaut-u') 
+    def test_munge_name_multiple_pass(self):
+        '''Munging name multiple times produces same result.'''
+        for org, exp in self.munge_list:
+            first_munge = munge_name(org)
+            nose_tools.assert_equal(first_munge, exp)
+            second_munge = munge_name(first_munge)
+            nose_tools.assert_equal(second_munge, exp)
+
+
+class TestMungeTitleToName(object):
+
+    # (original, expected)
+    munge_list = [
+        ('unchanged', 'unchanged'),
+        ('some spaces  here    &here', 'some-spaces-here-here'),
+        ('s', 's_'),  # too short
+        ('random:other%character&', 'random-othercharacter'),
+        (u'u with umlaut \xfc', 'u-with-umlaut-u'),
+        ('reallylong' * 12, 'reallylong' * 9 + 'reall'),
+        ('reallylong' * 12 + ' - 2012', 'reallylong' * 9 + '-2012'),
+        ('10cm - 50cm Near InfraRed (NI) Digital Aerial Photography (AfA142)',
+         '10cm-50cm-near-infrared-ni-digital-aerial-photography-afa142')
+    ]
 
     def test_munge_title_to_name(self):
-        def test_munge(title, expected_munge):
-            munge = ckan.lib.munge.munge_title_to_name(title)
-            assert_equal(munge, expected_munge)
+        '''Munge a list of names gives expected results.'''
+        for org, exp in self.munge_list:
+            munge = munge_title_to_name(org)
+            nose_tools.assert_equal(munge, exp)
 
-        test_munge('unchanged', 'unchanged')
-        test_munge('some spaces  here', 'some-spaces-here')
-        test_munge('s', 's_') # too short
-        test_munge('random:other%character&', 'random-othercharacter')
-        test_munge(u'u with umlaut \xfc', 'u-with-umlaut-u') 
-        test_munge('reallylong'*12 , 'reallylong'*9 + 'reall') 
-        test_munge('reallylong'*12 + ' - 2012' , 'reallylong'*9 + '-2012') 
+
+class TestMungeTag:
+
+    # (original, expected)
+    munge_list = [
+        ('unchanged', 'unchanged'),
+        ('s', 's_'),  # too short
+        ('some spaces  here', 'some-spaces--here'),
+        ('random:other%characters&_.here', 'randomothercharactershere'),
+        ('river-water-dashes', 'river-water-dashes'),
+    ]
 
     def test_munge_tag(self):
-        def test_munge(title, expected_munge):
-            munge = ckan.lib.munge.munge_tag(title)
-            assert_equal(munge, expected_munge)
+        '''Munge a list of tags gives expected results.'''
+        for org, exp in self.munge_list:
+            munge = munge_tag(org)
+            nose_tools.assert_equal(munge, exp)
 
-        test_munge('unchanged', 'unchanged')
-        test_munge('s', 's_') # too short
-        test_munge('some spaces  here', 'some-spaces--here')
-        test_munge('random:other%character&', 'randomothercharacter')
+    def test_munge_tag_multiple_pass(self):
+        '''Munge a list of tags muliple times gives expected results.'''
+        for org, exp in self.munge_list:
+            first_munge = munge_tag(org)
+            nose_tools.assert_equal(first_munge, exp)
+            second_munge = munge_tag(first_munge)
+            nose_tools.assert_equal(second_munge, exp)

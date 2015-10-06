@@ -32,7 +32,7 @@ def munge_title_to_name(name):
     # take out not-allowed characters
     name = re.sub('[^a-zA-Z0-9-_]', '', name).lower()
     # remove doubles
-    name = re.sub('--', '-', name)
+    name = re.sub('-+', '-', name)
     # remove leading or trailing hyphens
     name = name.strip('-')
     # if longer than max_length, keep last word if a year
@@ -101,7 +101,7 @@ def substitute_ascii_equivalents(text_unicode):
 def munge_tag(tag):
     tag = substitute_ascii_equivalents(tag)
     tag = tag.lower().strip()
-    tag = re.sub(r'[^a-zA-Z0-9 ]', '', tag).replace(' ', '-')
+    tag = re.sub(r'[^a-zA-Z0-9\- ]', '', tag).replace(' ', '-')
     tag = _munge_to_length(tag, model.MIN_TAG_LENGTH, model.MAX_TAG_LENGTH)
     return tag
 
