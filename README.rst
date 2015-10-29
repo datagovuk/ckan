@@ -1,8 +1,8 @@
 CKAN: The Open Source Data Portal Software
 ==========================================
 
-.. image:: https://secure.travis-ci.org/okfn/ckan.png?branch=master
-    :target: http://travis-ci.org/okfn/ckan
+.. image:: https://secure.travis-ci.org/datagovuk/ckan.png?branch=release-v2.2-dgu
+    :target: http://travis-ci.org/datagovuk/ckan
     :alt: Build Status
 
 .. image:: https://coveralls.io/repos/okfn/ckan/badge.png
@@ -36,7 +36,7 @@ searching first to see if there's already an issue for your bug).
 
 .. _CKAN tag on Stack Overflow: http://stackoverflow.com/questions/tagged/ckan
 .. _ckan-discuss: http://lists.okfn.org/mailman/listinfo/ckan-discuss
-.. _GitHub Issues: https://github.com/okfn/ckan/issues
+.. _GitHub Issues: https://github.com/ckan/ckan/issues
 
 
 Contributing to CKAN
