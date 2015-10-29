@@ -364,8 +364,12 @@ class PackageSearchQuery(SearchQuery):
         try:
             solr_response = conn.raw_query(**query)
         except SolrException, e:
-            raise SearchError('SOLR returned an error running query: %r Error: %r' %
-                              (query, e.reason))
+            try:
+                solr_error = json.loads(e.body)['error']['msg']
+            except:
+                solr_error = e.reason
+            raise SearchError('SOLR returned an error running query: %r Error: %s' %
+                              (query, solr_error))
 
         try:
             data = json.loads(solr_response)

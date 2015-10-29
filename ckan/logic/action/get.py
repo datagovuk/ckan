@@ -1684,7 +1684,7 @@ def package_search(context, data_dict):
         extras = data_dict.pop('extras', None)
 
         query = search.query_for(model.Package)
-        query.run(data_dict)
+        query.run(data_dict)  # may raise SearchError from SOLR
 
         # Add them back so extensions can use them on after_search
         data_dict['extras'] = extras
