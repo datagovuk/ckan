@@ -301,7 +301,8 @@ class TestSearchIndexer:
         from ckan import plugins
         if not is_search_supported():
             raise SkipTest("Search not supported")
-        plugins.load('synchronous_search')
+        if not plugins.plugin_loaded("synchronous_search"):
+            plugins.load('synchronous_search')
 
     @classmethod
     def index(cls):
