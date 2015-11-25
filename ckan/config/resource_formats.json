@@ -18,7 +18,7 @@
   ["MDB", "Access Database", "application/x-msaccess", []],
   ["NetCDF", "NetCDF File", "application/netcdf", []],
   ["ArcGIS Map Service", "ArcGIS Map Service", "ArcGIS Map Service", ["arcgis map service"]],
-  ["TSV", "Tab Separated Values File", "text/tsv", []],
+  ["TSV", "Tab Separated Values File", "text/tab-separated-values", ["text/tsv"]],
   ["WFS", "Web Feature Service", null, []],
   ["ArcGIS Online Map", "ArcGIS Online Map", "ArcGIS Online Map", ["web map application"]],
   ["Perl", "Perl Script", "text/x-perl", []],
@@ -48,13 +48,14 @@
   ["WMS", "Web Mapping Service", "WMS", ["wms"]],
   ["SVG", "SVG vector image", "image/svg+xml", ["svg"]],
   ["PPT", "Powerpoint Presentation", "application/vnd.ms-powerpoint", []],
+  ["ODP", "OpenDocument Presentation", "application/vnd.oasis.opendocument.presentation", []], 
   ["JPEG", "JPG Image File", "image/jpeg", ["jpeg", "jpg"]],
   ["SPARQL", "SPARQL end-point", "application/sparql-results+xml", []],
   ["GIF", "GIF Image File", "image/gif", []],
   ["RDF", "RDF", "application/rdf+xml", ["rdf/xml"]],
   ["E00", " ARC/INFO interchange file format", "application/x-e00", []],
   ["PDF", "PDF File", "application/pdf", []],
-  ["CSV", "Comma Separated Values File", "text/csv", ["text/comma-separated-values", "application/csv"]],
+  ["CSV", "Comma Separated Values File", "text/csv", ["text/comma-separated-values"]],
   ["ODC", "OpenDocument Chart", "application/vnd.oasis.opendocument.chart", []],
   ["Atom Feed", "Atom Feed", "application/atom+xml", []],
   ["MrSID", "MrSID", "image/x-mrsid", []],
@@ -68,5 +69,7 @@
   ["PNG", "PNG Image File", "image/png", []],
   ["RSS", "RSS feed", "application/rss+xml", []],
   ["GeoJSON", "Geographic JavaScript Object Notation", null, []],
-  ["SHP", "Shapefile", null, ["esri shapefile"]]
+  ["SHP", "Shapefile", null, ["esri shapefile"]],
+  ["TORRENT", "Torrent", "application/x-bittorrent", []],
+  ["ICS", "iCalendar", "text/calendar", ["ifb", "iCal"]]
 ]
