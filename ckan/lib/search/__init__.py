@@ -216,7 +216,7 @@ def rebuild(package_id=None, only_missing=False, force=False, refresh=False,
 def commit():
     package_index = index_for(model.Package)
     package_index.commit()
-    log.info('Commited pending changes on the search index')
+    log.info('Committed pending changes on the search index')
 
 
 def check():
