@@ -1008,7 +1008,8 @@ def resource_show(context, data_dict):
         raise NotFound(_('Resource was not found.'))
 
     # original dictized version didn't include this field:
-    resource_dict.pop('revision_timestamp')
+    if 'revision_timestamp' in resource_dict:
+        resource_dict.pop('revision_timestamp')
     return resource_dict
 
 def resource_status_show(context, data_dict):
