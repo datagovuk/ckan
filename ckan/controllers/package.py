@@ -204,13 +204,16 @@ class PackageController(base.BaseController):
                         # be, so ignore.
                         param = param.decode('ascii', 'ignore')
                         c.fields.append((param, value))
-                        fq += ' %s:"%s"' % (param, value)
                         if param not in c.fields_grouped:
                             c.fields_grouped[param] = [value]
                         else:
                             c.fields_grouped[param].append(value)
                     else:
                         search_extras[param] = value
+
+            for param, values in c.fields_grouped.items():
+                value = '(%s)' % ' OR '.join('"%s"' % value for value in values)
+                fq += ' {!tag=%s}%s:%s' % (param.upper(), param, value)
 
             context = {'model': model, 'session': model.Session,
                        'user': c.user or c.author, 'for_view': True,
@@ -250,7 +253,7 @@ class PackageController(base.BaseController):
             data_dict = {
                 'q': q,
                 'fq': fq.strip(),
-                'facet.field': facets.keys(),
+                'facet.field': ['{!ex=%s}%s' % (f.upper(), f) for f in facets.keys()], # TAGS
                 'rows': limit,
                 'start': (page - 1) * limit,
                 'sort': sort_by,
