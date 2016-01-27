@@ -1674,11 +1674,11 @@ def package_search(context, data_dict):
         # If this query hasn't come from a controller that has set this flag
         # then we should remove any mention of capacity from the fq and
         # instead set it to only retrieve public datasets
-        fq = data_dict.get('fq', '')
+        fq = data_dict.get('fq', [])
         if not context.get('ignore_capacity_check', False):
-            fq = ' '.join(p for p in fq.split(' ')
-                            if not 'capacity:' in p)
-            data_dict['fq'] = fq + ' capacity:"public"'
+            fq = [p for p in fq if not 'capacity:' in p]
+            fq.append('capacity:"public"')
+            data_dict['fq'] = fq
 
         # Pop these ones as Solr does not need them
         extras = data_dict.pop('extras', None)

@@ -194,7 +194,6 @@ class PackageController(base.BaseController):
             # a list of values eg {'tags':['tag1', 'tag2']}
             c.fields_grouped = {}
             search_extras = {}
-            fq = ''
             for (param, value) in request.params.items():
                 if param not in ['q', 'page', 'sort'] \
                         and len(value) and not param.startswith('_'):
@@ -211,9 +210,10 @@ class PackageController(base.BaseController):
                     else:
                         search_extras[param] = value
 
+            fq = []
             for param, values in c.fields_grouped.items():
                 value = '(%s)' % ' OR '.join('"%s"' % value for value in values)
-                fq += ' {!tag=%s}%s:%s' % (param.upper(), param, value)
+                fq.append('{!tag=%s}%s:%s' % (param.upper(), param, value))
 
             context = {'model': model, 'session': model.Session,
                        'user': c.user or c.author, 'for_view': True,
@@ -221,12 +221,12 @@ class PackageController(base.BaseController):
 
             if package_type and package_type != 'dataset':
                 # Only show datasets of this particular type
-                fq += ' +dataset_type:{type}'.format(type=package_type)
+                fq.append('+dataset_type:{type}'.format(type=package_type))
             else:
                 # Unless changed via config options, don't show non standard
                 # dataset types on the default search page
                 if not asbool(config.get('ckan.search.show_all_types', 'False')):
-                    fq += ' +dataset_type:dataset'
+                    fq.append('+dataset_type:dataset')
 
             facets = OrderedDict()
 
@@ -252,7 +252,7 @@ class PackageController(base.BaseController):
 
             data_dict = {
                 'q': q,
-                'fq': fq.strip(),
+                'fq': fq,
                 'facet.field': ['{!ex=%s}%s' % (f.upper(), f) for f in facets.keys()], # TAGS
                 'rows': limit,
                 'start': (page - 1) * limit,
