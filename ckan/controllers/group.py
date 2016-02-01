@@ -168,15 +168,12 @@ class GroupController(base.BaseController):
 
     def read(self, id, limit=20):
         group_type = self._get_group_type(id.split('@')[0])
-        if group_type != self.group_type:
-            abort(404, _('Incorrect group type'))
 
         context = {'model': model, 'session': model.Session,
                    'user': c.user or c.author,
                    'schema': self._db_to_form_schema(group_type=group_type),
                    'for_view': True}
-        data_dict = {'id': id}
-
+        data_dict = {'id': id, 'type': group_type}
         # unicode format (decoded from utf8)
         q = c.q = request.params.get('q', '')
 
@@ -303,7 +300,7 @@ class GroupController(base.BaseController):
                 if self.group_type == 'organization':
                     facets = plugin.organization_facets(
                         facets, self.group_type, None)
-                else:
+                elif group_type == self.group_type:
                     facets = plugin.group_facets(
                         facets, self.group_type, None)
 
@@ -323,7 +320,10 @@ class GroupController(base.BaseController):
                 'extras': search_extras
             }
 
-            query = get_action('package_search')(context, data_dict)
+            # We must remove the schema from context as it will confused package_search
+            context_ = dict((k, v) for (k, v) in context.items() if k != 'schema')
+
+            query = get_action('package_search')(context_, data_dict)
 
             c.page = h.Page(
                 collection=query['results'],
@@ -345,7 +345,6 @@ class GroupController(base.BaseController):
                                                g.facets_default_number))
                 c.search_facets_limits[facet] = limit
             c.page.items = query['results']
-
             c.sort_by_selected = sort_by
 
         except search.SearchError, se:
@@ -427,7 +426,8 @@ class GroupController(base.BaseController):
         context = {'model': model, 'session': model.Session,
                    'user': c.user or c.author,
                    'save': 'save' in request.params,
-                   'parent': request.params.get('parent', None)}
+                   'parent': request.params.get('parent', None),
+                   'type': group_type}
         try:
             self._check_access('group_create', context)
         except NotAuthorized:

@@ -23,7 +23,7 @@ import ckan.lib.search as search
 import ckan.lib.plugins as lib_plugins
 import ckan.lib.activity_streams as activity_streams
 import ckan.new_authz as new_authz
-import ckan.lib.lazyjson as lazyjson 
+import ckan.lib.lazyjson as lazyjson
 from paste.deploy.converters import asbool
 
 from ckan.common import _
@@ -633,7 +633,6 @@ def organization_list_for_user(context, data_dict):
 
     orgs_list = model_dictize.group_list_dictize(orgs_q.all(), context)
     return orgs_list
-
 
 def _group_or_org_revision_list(context, data_dict):
     '''Return a group's revisions.
