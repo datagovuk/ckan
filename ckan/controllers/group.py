@@ -458,7 +458,8 @@ class GroupController(base.BaseController):
                    'for_edit': True,
                    'parent': request.params.get('parent', None)
                    }
-        data_dict = {'id': id}
+        data_dict = {'id': id, 'type': group_type}
+
 
         if context['save'] and not data:
             return self._save_edit(id, context)
@@ -476,7 +477,6 @@ class GroupController(base.BaseController):
         group = context.get("group")
         c.group = group
         c.group_dict = self._action('group_show')(context, data_dict)
-
         try:
             self._check_access('group_update', context)
         except NotAuthorized, e:
@@ -541,8 +541,7 @@ class GroupController(base.BaseController):
             context['message'] = data_dict.get('log_message', '')
             data_dict['id'] = id
             context['allow_partial_update'] = True
-            # DGU does not have packages on its group form
-            context['prevent_packages_update'] = True
+
             group = self._action('group_update')(context, data_dict)
             if id != group['name']:
                 self._force_reindex(group)

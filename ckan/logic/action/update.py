@@ -483,6 +483,8 @@ def _group_or_org_update(context, data_dict, is_org=False):
     if group is None:
         raise NotFound('Group was not found.')
 
+    context['prevent_packages_update'] = group.is_organization
+
     # get the schema
     group_plugin = lib_plugins.lookup_group_plugin(group.type)
     try:
@@ -529,13 +531,6 @@ def _group_or_org_update(context, data_dict, is_org=False):
     else:
         rev.message = _(u'REST API: Update object %s') % data.get("name")
 
-    # when editing an org we do not want to update the packages if using the
-    # new templates.
-    if ((not is_org)
-            and not converters.asbool(
-                config.get('ckan.legacy_templates', False))
-            and 'api_version' not in context):
-        context['prevent_packages_update'] = True
     group = model_save.group_dict_save(data, context)
 
     if is_org:
