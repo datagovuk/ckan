@@ -483,8 +483,6 @@ def _group_or_org_update(context, data_dict, is_org=False):
     if group is None:
         raise NotFound('Group was not found.')
 
-    context['prevent_packages_update'] = group.is_organization
-
     # get the schema
     group_plugin = lib_plugins.lookup_group_plugin(group.type)
     try:
@@ -531,7 +529,7 @@ def _group_or_org_update(context, data_dict, is_org=False):
     else:
         rev.message = _(u'REST API: Update object %s') % data.get("name")
 
-    group = model_save.group_dict_save(data, context)
+    group = model_save.group_dict_save(data, context,prevent_packages_update=is_org)
 
     if is_org:
         plugin_type = plugins.IOrganizationController
