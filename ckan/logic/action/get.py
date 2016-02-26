@@ -23,7 +23,7 @@ import ckan.lib.search as search
 import ckan.lib.plugins as lib_plugins
 import ckan.lib.activity_streams as activity_streams
 import ckan.new_authz as new_authz
-import ckan.lib.lazyjson as lazyjson 
+import ckan.lib.lazyjson as lazyjson
 from paste.deploy.converters import asbool
 
 from ckan.common import _
@@ -1651,6 +1651,9 @@ def package_search(context, data_dict):
     session = context['session']
 
     _check_access('package_search', context, data_dict)
+
+    if 'fq' in data_dict and isinstance(data_dict['fq'], basestring):
+        data_dict['fq'] = [d for d in data_dict['fq'].split(' ')]
 
     # Move ext_ params to extras and remove them from the root of the search
     # params, so they don't cause and error
