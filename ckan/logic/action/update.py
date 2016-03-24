@@ -139,7 +139,6 @@ def related_update(context, data_dict):
     context["related"] = related
 
     if not related:
-        logging.error('Could not find related ' + id)
         raise NotFound(_('Item was not found.'))
 
     _check_access('related_update', context, data_dict)
@@ -208,7 +207,6 @@ def resource_update(context, data_dict):
     context["resource"] = resource
 
     if not resource:
-        logging.error('Could not find resource ' + id)
         raise NotFound(_('Resource was not found.'))
 
     _check_access('resource_update', context, data_dict)
@@ -227,7 +225,7 @@ def resource_update(context, data_dict):
         if p['id'] == id:
             break
     else:
-        logging.error('Could not find resource ' + id)
+        log.error('Could not find resource %s after all', id)
         raise NotFound(_('Resource was not found.'))
 
     upload = uploader.ResourceUpload(data_dict)
