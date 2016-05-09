@@ -36,7 +36,7 @@ def res_format(resource):
     ''' The assumed resource format in lower case. '''
     if not resource['url']:
         return None
-    return (resource['format'] or resource['url'].split('.')[-1]).lower()
+    return (resource.get('format') or resource['url'].split('.')[-1]).lower()
 
 
 def compare_domains(urls):
