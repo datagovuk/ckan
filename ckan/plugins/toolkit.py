@@ -157,8 +157,8 @@ For example: ``bar = toolkit.asint(config.get('ckan.foo.bar', 0))``
 
 '''
         t['aslist'] = converters.aslist
-        self.docstring_overrides['aslist'] = '''Convert a string from the
-config file into a list.
+        self.docstring_overrides['aslist'] = '''Convert a space-separated
+        string from the config file into a list.
 
 For example: ``bar = toolkit.aslist(config.get('ckan.foo.bar', []))``
 
