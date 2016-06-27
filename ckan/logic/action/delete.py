@@ -277,7 +277,7 @@ def member_delete(context, data_dict=None):
     if not obj:
         raise NotFound('%s was not found.' % obj_type.title())
 
-    _check_access('member_create', context, data_dict)
+    _check_access('member_delete', context, data_dict)
 
     member = model.Session.query(model.Member).\
             filter(model.Member.table_name == obj_type).\
@@ -621,6 +621,7 @@ def group_member_delete(context, data_dict=None):
     :type username: string
 
     '''
+    _check_access('group_member_delete',context, data_dict)
     return _group_or_org_member_delete(context, data_dict)
 
 def organization_member_delete(context, data_dict=None):
@@ -634,6 +635,7 @@ def organization_member_delete(context, data_dict=None):
     :type username: string
 
     '''
+    _check_access('organization_member_delete',context, data_dict)
     return _group_or_org_member_delete(context, data_dict)
 
 
