@@ -45,7 +45,7 @@ class SimpleDumper(object):
 
     def dump_json(self, dump_file_obj, query):
         pkgs = []
-        for pkg in query:
+        for pkg in query.yield_per(200):
             pkg_dict = pkg.as_dict()
             pkgs.append(pkg_dict)
         json.dump(pkgs, dump_file_obj, indent=4)
