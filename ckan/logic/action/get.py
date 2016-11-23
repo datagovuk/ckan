@@ -1068,15 +1068,23 @@ def revision_show(context, data_dict):
 def _group_or_org_show(context, data_dict, is_org=False):
     model = context['model']
     id = _get_or_bust(data_dict, 'id')
+    user = context.get('user')
 
     group = model.Group.get(id)
     context['group'] = group
 
-    include_datasets = data_dict.get('include_datasets', True)
+    # DGU note: default changed to False, as per newer CKAN versions
+    include_datasets = data_dict.get('include_datasets', False)
     if isinstance(include_datasets, basestring):
         include_datasets = (include_datasets.lower() in ('true', '1'))
     packages_field = 'datasets' if include_datasets \
                      else 'none_but_include_package_count'
+
+    # DGU Hack - don't reveal users (unless sysadmin)
+    include_users = asbool(data_dict.get('include_users', True))
+    sysadmin = new_authz.is_sysadmin(user)
+    if not sysadmin and include_users:
+        include_users = False
 
     if group is None:
         raise NotFound
@@ -1092,7 +1100,8 @@ def _group_or_org_show(context, data_dict, is_org=False):
 
 
     group_dict = model_dictize.group_dictize(group, context,
-                                             packages_field=packages_field)
+                                             packages_field=packages_field,
+                                             include_users=include_users,)
 
     if is_org:
         plugin_type = plugins.IOrganizationController
@@ -1130,6 +1139,9 @@ def group_show(context, data_dict):
     :param include_datasets: include a list of the group's datasets
          (optional, default: ``True``)
     :type id: boolean
+    :param include_users: include the organization's users
+         (optional, default: ``True``)
+         DGU Hack - only available for sysadmins
 
     :rtype: dictionary
 
@@ -1144,7 +1156,11 @@ def organization_show(context, data_dict):
     :param id: the id or name of the organization
     :type id: string
     :param include_datasets: include a list of the organization's datasets
+         (optional, default: ``False``)
+    :type id: boolean
+    :param include_users: include the organization's users
          (optional, default: ``True``)
+         DGU Hack - only available for sysadmins
     :type id: boolean
 
     :rtype: dictionary
