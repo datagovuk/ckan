@@ -1080,11 +1080,7 @@ def _group_or_org_show(context, data_dict, is_org=False):
     packages_field = 'datasets' if include_datasets \
                      else 'none_but_include_package_count'
 
-    # DGU Hack - don't reveal users (unless sysadmin)
     include_users = asbool(data_dict.get('include_users', True))
-    sysadmin = new_authz.is_sysadmin(user)
-    if not sysadmin and include_users:
-        include_users = False
 
     if group is None:
         raise NotFound
@@ -1141,7 +1137,6 @@ def group_show(context, data_dict):
     :type id: boolean
     :param include_users: include the organization's users
          (optional, default: ``True``)
-         DGU Hack - only available for sysadmins
 
     :rtype: dictionary
 
@@ -1160,7 +1155,6 @@ def organization_show(context, data_dict):
     :type id: boolean
     :param include_users: include the organization's users
          (optional, default: ``True``)
-         DGU Hack - only available for sysadmins
     :type id: boolean
 
     :rtype: dictionary
